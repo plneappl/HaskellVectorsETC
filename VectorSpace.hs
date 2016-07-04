@@ -50,7 +50,7 @@ vectorSpaceBases 0 = [[]]
 vectorSpaceBases n = filter isVectorSpaceBase [v:vs | v <- allVectors, vs <- vectorSpaceBases (n - 1)]
 
 inVectorSpace :: (Enum a, Enum (v a), Bounded (v a), Bounded a, Eq (v a), Vector v a) => v a -> [v a] -> Bool
-inVectorSpace v vs = isVectorSpaceBase (v : vs)
+inVectorSpace v vs = not $ (v `notElem` vs) && isVectorSpaceBase (v : vs)
 
 containsAll :: (Enum a, Enum (v a), Bounded (v a), Bounded a, Eq (v a), Vector v a) => [v a] -> [v a] -> Bool
 containsAll vs ws = all (`inVectorSpace` ws) vs 

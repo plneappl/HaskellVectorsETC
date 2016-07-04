@@ -26,8 +26,10 @@ class (Applicative v, Collection v, Num a) => Vector v a where
   (^*) = flip (*^)
   (⋅) :: (Num a) => v a -> v a -> a
   v ⋅ w = sum $ toList $ v * w
+  unitV :: Int -> v a
+  unitV i = fromList $ map fromInteger $ (replicate (i - 1) 0) ++ [1] ++ [0, 0..]
   
-instance (Eq a, Vector v a) => Eq (v a) where
+instance {-# OVERLAPPABLE #-} (Eq a, Vector v a) => Eq (v a) where
   v == w = and (zipWith (==) (toList v) (toList w)) 
 
 instance (Vector v a) => Num (v a) where
