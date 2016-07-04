@@ -45,7 +45,7 @@ instance (Enum a, Bounded a, Vector v a) => Enum (v a) where
       maxI = fromEnum (maxBound :: a)
       minI = fromEnum (minBound :: a)
       cnt = maxI - minI + 1 
-      elems = [div i cnt ^ pow | pow <- [0..]] in
+      elems = [div i (cnt ^ pow) | pow <- [0..]] in
       ((toEnum :: Int -> a) <$> (fromList :: [Int] -> v Int) elems)
 
   fromEnum (v :: v a) = let
@@ -53,7 +53,7 @@ instance (Enum a, Bounded a, Vector v a) => Enum (v a) where
     maxI = (fromEnum :: a -> Int) (maxBound :: a) :: Int 
     minI = (fromEnum :: a -> Int) (minBound :: a) :: Int
     cnt = maxI - minI + 1 in
-    sum $ map (\(e, pow) -> e * cnt ^ pow) $ elems `zip` [0..]
+    sum $ map (\(e, pow) -> e * (cnt ^ pow)) $ elems `zip` [0..]
 
 instance (Bounded a, Vector v a) => Bounded (v a) where
   minBound = pure minBound
@@ -64,3 +64,5 @@ allVectors = let
   minI = fromEnum (minBound :: v a)
   maxI = fromEnum (maxBound :: v a) in
   map toEnum [minI .. maxI]
+
+

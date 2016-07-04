@@ -4,8 +4,10 @@ module V8 where
 
 import Vector
 
-data V8 a = V8 a a a a a a a a deriving Show
+data V8 a = V8 a a a a a a a a 
 
+instance (Show a) => Show (V8 a) where
+  show (V8 x1 x2 x3 x4 x5 x6 x7 x8) = show (x1, x2, x3, x4, x5, x6, x7, x8)
 
 instance Unlistable V8 where
   fromList (x1:x2:x3:x4:x5:x6:x7:x8:_) = V8 x1 x2 x3 x4 x5 x6 x7 x8

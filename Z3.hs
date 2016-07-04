@@ -1,6 +1,10 @@
 module Z3 where
 
-data Z3 = Zero | One | Two deriving(Show, Bounded, Eq)
+data Z3 = Zero | One | Two deriving(Bounded, Eq)
+
+instance Show Z3 where
+  show = show . fromEnum
+
 instance Num Z3 where
   Zero + Zero   = Zero
   Zero + One    = One

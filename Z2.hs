@@ -1,6 +1,9 @@
 module Z2 where
 
-data Z2 = Zero | One deriving(Show, Bounded, Eq)
+data Z2 = Zero | One deriving (Bounded, Eq)
+instance Show Z2 where
+  show = show . fromEnum
+  
 instance Num Z2 where
   Zero + Zero   = Zero
   One  + One    = Zero
