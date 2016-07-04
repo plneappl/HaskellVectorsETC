@@ -25,7 +25,9 @@ instance Num Z3 where
   fromInteger x | mod x 3 == 0 = Zero
                 | mod x 3 == 1 = One
                 | otherwise    = Two
-  negate x      = x
+  negate One    = Two
+  negate Two    = One
+  negate Zero   = Zero
 
 instance Enum Z3 where
   fromEnum Zero = 0
