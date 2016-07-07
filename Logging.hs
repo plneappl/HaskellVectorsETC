@@ -4,6 +4,7 @@ module Logging(Logging(L), entries, d) where
 
 import Control.Applicative
 import Control.Monad
+import Data.List
 
 data Logging a = L {
   entries :: [String],
@@ -12,7 +13,7 @@ data Logging a = L {
 
 
 instance (Show a) => Show (Logging a) where
-  show l = show (entries l) ++ "\n" ++ show (d l)  
+  show l = (intercalate "\n" (entries l)) ++ "\n\n" ++ show (d l)  
 
 instance Functor Logging where
   fmap f l = l {d = f (d l)}

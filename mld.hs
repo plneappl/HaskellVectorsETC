@@ -34,22 +34,20 @@ mld rm z = stage1 rm z
 
 stage1 :: (Eq [Int]) => RMCode -> PowVector -> Logging PowVector
 stage1 rm@(RM r) z = do
-  let majs = map stage1_1 (vectorSpaceBases r :: [[BaseVector]]) 
-  res <- stage1_3 $ map stage1_1 (vectorSpaceBases r :: [[BaseVector]])
-  L [show majs] res where
-  stage1_1 m_vs = (,) 
-    (tr (chi m_vs)) $ 
-    moreOne $ 
-    map stage1_2 $ 
-    zip [1..] $ 
-    take (2^(m - r) - 2) $ 
-    nubBy containsAll $ 
-    filter (containsAll m_vs) $ 
-    vectorSpaceBases (r+1)
+  let majs = mapM stage1_1 $ map (\ x -> L [show x ++ ":"] x) (vectorSpaceBases r :: [[BaseVector]]) 
+  res <- stage1_3 majs
+  L ["Majs: " ++ (show $ d majs)] res where
+  stage1_1 l_m_vs = do
+    m_vs <- l_m_vs
+    let mis = zip [1..] $ take (2^(m - r) - 2) $ nubBy containsAll $ filter (containsAll m_vs) $ vectorSpaceBases (r+1)
+    mi <- mapM stage1_2 mis
+    let t = (,) (tr (chi m_vs)) $ moreOne mi  
+    return t
+      
   stage1_2 (i, mi) = let
     ki = (chi mi) ⋅ z in
-    ki
-  stage1_3 majs = stage2 1 majs rm z
+    L ["mi:" ++ (show mi), "chi: " ++ (show $ chi mi), "ki: " ++ (show ki)] ki
+  stage1_3 majs = majs >>= \majs' -> stage2 1 majs' rm z
 
 stage2 :: (Eq [Int]) => Int -> [([Int], Bool)] -> RMCode -> PowVector -> Logging (PowVector)
 stage2 run majs rm@(RM r) z | r - run <= 0 = stage3 run majs rm z
@@ -64,7 +62,7 @@ stage3 run majs rm@(RM r) z = let
   atOthers = map (findMaj majs . tr . chi) $ filter isVectorSpaceBase $ map (: []) (allVectors :: [BaseVector])
   at1 = moreTrue atOthers
   atOthers' = at1 : (if at1 then map not atOthers else atOthers) in 
-  L ["atOthers: " ++ show atOthers, "atOthers': " ++ show atOthers'] $ z + (fromBoolV $ fromList atOthers')
+  L ["atOthers': " ++ show atOthers'] $ z + (fromBoolV $ fromList atOthers')
 
 findMaj :: (Eq [Int]) => [([Int], Bool)] -> [Int] -> Bool
 findMaj ((tr, ug):majs) v | tr == v   = ug

@@ -6,7 +6,6 @@ import V3
 import V8
 import Vector
 import Data.List
-import Control.Monad.Logic
 
 
 combinations :: Int -> [a] -> [[a]]
@@ -54,7 +53,4 @@ inVectorSpace v vs = not $ (v `notElem` vs) && isVectorSpaceBase (v : vs)
 
 containsAll :: (Enum a, Enum (v a), Bounded (v a), Bounded a, Eq (v a), Vector v a) => [v a] -> [v a] -> Bool
 containsAll vs ws = all (`inVectorSpace` ws) vs 
-
-izip :: [a] -> [b] -> [(a, b)]
-izip as bs = as >>- (\a -> [(a, b) | b <- bs])
 

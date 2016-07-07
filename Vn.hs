@@ -56,10 +56,10 @@ instance (Collection v) => Collection (VCons v) where
   toList (VCons x xs) = x : toList xs 
 
 instance (Show a) => Show (VNil a) where
-  show _ = ""
+  show _ = ")"
 
 instance (Show (v a), Show a) => Show (VCons v a) where
-  show (VCons x xs) = show x ++ ", " ++ show xs
+  show (VCons x xs) = ", " ++ show x ++ show xs
 
 instance Applicative VNil where
   pure _ = VNil
