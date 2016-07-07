@@ -14,23 +14,26 @@ import Vn
 import Vector
 import Z2
 
-data RMCode = RM{r :: Int, m :: Int} deriving (Show)
+data RMCode = RM{r :: Int} deriving (Show)
 
+
+m :: Int 
+m = 3
 type BaseVector = V3 Z2
 type PowVector  = V8 Z2 
 
 
 errorCorrectivity :: RMCode -> Int
-errorCorrectivity (RM r m) = (2 ^ (m-r-1)) - 1
+errorCorrectivity (RM r) = (2 ^ (m-r-1)) - 1
 
 dimension :: RMCode -> Int
-dimension (RM r m) = 2 ^ (m - r)
+dimension (RM r) = 2 ^ (m - r)
 
 mld :: RMCode -> PowVector -> Logging PowVector
 mld rm z = stage1 rm z
 
 stage1 :: (Eq [Int]) => RMCode -> PowVector -> Logging PowVector
-stage1 rm@(RM r m) z = do
+stage1 rm@(RM r) z = do
   let majs = map stage1_1 (vectorSpaceBases r :: [[BaseVector]]) 
   res <- stage1_3 $ map stage1_1 (vectorSpaceBases r :: [[BaseVector]])
   L [show majs] res where
@@ -49,7 +52,7 @@ stage1 rm@(RM r m) z = do
   stage1_3 majs = stage2 1 majs rm z
 
 stage2 :: (Eq [Int]) => Int -> [([Int], Bool)] -> RMCode -> PowVector -> Logging (PowVector)
-stage2 run majs rm@(RM r m) z | r - run <= 0 = stage3 run majs rm z
+stage2 run majs rm@(RM r) z | r - run <= 0 = stage3 run majs rm z
                               | otherwise    = stage2 (run + 1) (map stage2_1 (vectorSpaceBases (r - run) :: [[BaseVector]])) rm z where
   stage2_1 n_vs = let
     nis = take (2 ^ (m - r) - 2) $ zip [1..] $ filter (containsAll n_vs) (vectorSpaceBases (r + 1 - run) :: [[BaseVector]]) in
@@ -57,7 +60,7 @@ stage2 run majs rm@(RM r m) z | r - run <= 0 = stage3 run majs rm z
   stage2_2 (i, ni) = findMaj majs (tr $ chi ni)
 
 stage3 :: (Eq [Int]) => Int -> [([Int], Bool)] -> RMCode -> PowVector -> Logging (PowVector)
-stage3 run majs rm@(RM r m) z = let
+stage3 run majs rm@(RM r) z = let
   atOthers = map (findMaj majs . tr . chi) $ filter isVectorSpaceBase $ map (: []) (allVectors :: [BaseVector])
   at1 = moreTrue atOthers
   atOthers' = at1 : (if at1 then map not atOthers else atOthers) in 
@@ -96,7 +99,7 @@ g x = x + 2
 main :: IO ()
 main = do
   let z = (fromList [1, 0, 1, 1, 1, 0, 0, 1]) :: PowVector
-  let yL = mld (RM 1 3) z
+  let yL = mld (RM 1) z
   let y = d yL
   print z
   print y
